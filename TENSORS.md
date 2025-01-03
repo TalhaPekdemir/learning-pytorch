@@ -1,5 +1,51 @@
 # Tensors on PyTorch
 
+# Table of Contents
+
+1.  [Creation of Tensor](#creation-of-tensor)
+    1. [By Hand:](#by-hand)
+    2. [With Methods](#with-methods)
+       1. [Random Tensor](#random-tensor)
+       2. [Tensor of Zeros](#tensor-of-zeros)
+       3. [Tensor of Ones](#tensor-of-ones)
+       4. [Tensor in Range](#tensor-in-range)
+       5. [New Tensor from Shape of Another Tensor](#new-tensor-from-shape-of-another-tensor)
+    3. [Intermediate Tensor Creation](#intermediate-tensor-creation)
+       1. [Tensor Data Type](#tensor-data-type)
+       2. [Tensor Device](#tensor-device)
+2.  [Tensor Properties](#tensor-properties)
+3.  [Tensor Manipulation](#tensor-manipulation)
+    1. [Addition](#addition)
+    2. [Subtraction](#subtraction)
+    3. [Multiplication](#multiplication)
+    4. [Division](#division)
+    5. [Matrix Multiplication](#matrix-multiplication)
+    6. [Matrix Transpose](#matrix-transpose)
+4.  [Tensor Aggregation](#tensor-aggregation)
+    1. [Min](#min)
+    2. [Max](#max)
+    3. [Mean](#mean)
+    4. [Sum](#sum)
+    5. [Arg Min](#arg-min)
+    6. [Arg Max](#arg-max)
+5.  [Tensor Shape Manipulation](#tensor-shape-manipulation)
+    1. [Reshape](#reshape)
+    2. [View](#view)
+    3. [Stack](#stack)
+    4. [hstack](#hstack)
+    5. [vstack](#vstack)
+    6. [Squeeze](#squeeze)
+    7. [Unsqueeze](#unsqueeze)
+    8. [Permute](#permute)
+6.  [Tensor Indexing](#tensor-indexing)
+7.  [PyTorch, Numpy and You](#pytorch-numpy-and-you)
+    1. [Numpy Array to Tensor](#numpy-array-to-tensor)
+    2. [Tensor to Numpy Array](#tensor-to-numpy-array)
+8.  [Reproducibility](#reproducibility)
+9.  [Running PyTorch on GPU](#running-pytorch-on-gpu)
+    1. [Check GPU Access](#check-gpu-access)
+    2. [Moving Existing Tensor to GPU](#moving-existing-tensor-to-gpu)
+
 For more info refer to the [docs](https://pytorch.org/docs/stable/tensors.html).
 
 - A tensor can hold only numerical values like whole numbers (eg. int64, int32) and floating point numbers (eg. float32, float16).
@@ -195,10 +241,6 @@ params_tensor = torch.tensor(data=[1, 9, 0, 3],
 
 - Instead of each element generating one result, entire `i`th row and entire `i`th column contributes to one result. This operation called as [dot product](https://en.wikipedia.org/wiki/Dot_product).
 
-```python
-
-```
-
 ### Addition
 
 ```python
@@ -390,7 +432,7 @@ agg_tensor.max(), torch.max(agg_tensor)
 
 ### Mean
 
-Returns the average of values in tensor. 
+Returns the average of values in tensor.
 
 ```python
 # Mean excepts a float or complex number input
@@ -402,7 +444,7 @@ agg_tensor.mean()
 print("With tensor method: ", agg_tensor.mean(dtype=torch.float32))
 
 # Or cast it before using if not sure.
-print("With tensor method but input casted before:", 
+print("With tensor method but input casted before:",
       agg_tensor.type(torch.float32).mean())
 
 # Similar to min and max, mean can be calculated with torch methods.
@@ -444,7 +486,7 @@ Returns the index o maximum value in tensor.
 ```python
 agg_tensor.argmax(), torch.argmax(agg_tensor)
 
-# Output: 
+# Output:
 # (tensor(8), tensor(8))
 ```
 
@@ -518,7 +560,6 @@ reshaped_tensor, reshaped_tensor.shape
 #  torch.Size([4, 3]))
 ```
 
-
 ### View
 
 - Returns a reshaped tensor based from another tensor. Viewed tensor shares the same memory with original tensor's values.
@@ -527,22 +568,22 @@ reshaped_tensor, reshaped_tensor.shape
 
 ```python
 view_tensor = dummy_tensor.view(3,4)
-# View tensor:  
+# View tensor:
 # tensor([[ 1,  2,  3,  4],
 #         [ 5,  6,  7,  8],
 #         [ 9, 10, 11, 12]])
 #
-# Original tensor:  
+# Original tensor:
 # tensor([1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12])
 
 view_tensor[0, 0] = 99 # make changes
 
-# View tensor:  
+# View tensor:
 # tensor([[99,  2,  3,  4],
 #         [ 5,  6,  7,  8],
 #         [ 9, 10, 11, 12]])
 
-# Original tensor:  
+# Original tensor:
 # tensor([99,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12])
 
 ```
@@ -621,13 +662,13 @@ print("Tensor B", hstack_tensor_B)
 
 print(torch.hstack([hstack_tensor_A, hstack_tensor_B]))
 
-# Tensor A: 
+# Tensor A:
 # tensor([[[1, 2],
 #          [3, 4]],
 
 #         [[5, 6],
 #          [7, 8]]])
-# Tensor B: 
+# Tensor B:
 # tensor([[[ 9, 10],
 #          [11, 12]],
 
@@ -698,12 +739,12 @@ sq_tensor.squeeze(), torch.squeeze(sq_tensor)
 |   | + |              \          |   |   |   | +
 |   |/| +         ------\         |   |   |   |/|
 +---+ |/|         ------/         +---+---+---+ |
-|   | + |              /          |   |   |   | + 
+|   | + |              /          |   |   |   | +
 |   |/| +                         |   |   |   |/
 +---+ |/                          +---+---+---+
-|   | +   
-|   |/    
-+---+ 
+|   | +
+|   |/
++---+
 ```
 
 ### Unsqueeze
@@ -753,4 +794,254 @@ print("image_tensor after changing permuted tensor:", image_tensor[0, 0, 0])
 # Outputs:
 # image_tensor before changing permuted tensor: tensor(0.4575)
 # image_tensor after changing permuted tensor: tensor(1.)
+```
+
+## Tensor Indexing
+
+Tensors can be sliced like python arrays.
+
+```python
+slice_tensor = torch.arange(1, 10).reshape(1, 3, 3) #3D
+# tensor([[[1, 2, 3],
+#          [4, 5, 6],
+#          [7, 8, 9]]])
+
+slice_tensor[0] # 2D
+# tensor([[1, 2, 3],
+#         [4, 5, 6],
+#         [7, 8, 9]])
+
+slice_tensor[0, :, :]
+# tensor([[1, 2, 3],
+#         [4, 5, 6],
+#         [7, 8, 9]])
+
+slice_tensor[0, :, 2]
+# tensor([3, 6, 9])
+
+# etc...
+```
+
+## PyTorch, Numpy and You
+
+PyTorch does not strictly depend on [Numpy](https://numpy.org/) but they can work together. Numpy is a widely used library in deep learning because of its speed and built-in functions. Also numpy array can be saved to a file for faster read-write operations from disk.
+
+![pytorch_and_numpy.png](resources/pytorch_and_numpy.png)
+
+### Numpy Array to Tensor
+
+```python
+import torch
+import numpy as np
+
+# Float array to float tensor
+nparray = np.arange(1.0, 10.0)
+tensor_from_np = torch.from_numpy(nparray)
+
+nparray, tensor_from_np
+
+# Outputs:
+# (array([1., 2., 3., 4., 5., 6., 7., 8., 9.]),
+#  tensor([1., 2., 3., 4., 5., 6., 7., 8., 9.], dtype=torch.float64))
+```
+
+Newly crated tensor from numpy array has dtype of float64 because numpy has default dtype of float 64. This is different than PyTorch's float32.
+
+```python
+nparray.dtype
+
+# Outputs:
+# dtype('float64')
+```
+
+Also numpy has different default integer dtype (int32). On the other hand PyTorch using int64 for integer tensors.
+
+```python
+# Int array to int tensor
+nparray = np.arange(1, 10)
+tensor_from_np = torch.from_numpy(nparray)
+
+nparray, tensor_from_np
+
+# Outputs:
+# (array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+#  tensor([1, 2, 3, 4, 5, 6, 7, 8, 9], dtype=torch.int32))
+```
+
+[Numpy array and tensor values share the same memory](https://pytorch.org/docs/2.5/generated/torch.from_numpy.html). Changes to either of the array of the tensor will be reflected to each other.
+
+```python
+np_array[0] = 100
+np_tensor[1] = 200
+
+# Outputs:
+# np_array, np_tensor:
+# (array([100., 200.,   2.,   3.,   4.,   5.,   6.,   7.,   8.,   9.],
+#        dtype=float32),
+#  tensor([100., 200.,   2.,   3.,   4.,   5.,   6.,   7.,   8.,   9.]))
+```
+
+**Warning:** If dtype changed after using ndarray for tensor creation, numpy array and tensor would no longer share the same memory.
+
+```python
+np_array = np.arange(10.)
+np_tensor = torch.from_numpy(np_array).type(torch.float32)
+
+np_array[0] = 100
+np_tensor[1] = 200
+
+print(np_array, np_array.dtype)
+print(np_tensor, np_tensor.dtype)
+
+# outputs:
+# [100.   1.   2.   3.   4.   5.   6.   7.   8.   9.] float64
+# tensor([  0., 200.,   2.,   3.,   4.,   5.,   6.,   7.,   8.,   9.]) torch.float32
+```
+
+### Tensor to Numpy Array
+
+```python
+soon_to_array_tensor = torch.tensor([1, 2, 3])
+now_array_tensor = soon_to_array_tensor.numpy()
+
+# Outputs:
+# now_array_tensor:
+# array([1, 2, 3], dtype=int64)
+```
+
+Just like pytorch infers dtype of numpy array and returns a tensor with same dtype, same applies if a tensor gets converted to a numpy array.
+
+```python
+# Outputs:
+# soon_to_array_tensor.dtype, now_array_tensor.dtype
+# (torch.int64, dtype('int64'))
+```
+
+Since numpy array and tensor shares same memory, modifications to tensor reflects to tensor too.
+
+```python
+soon_to_array_tensor += 1
+
+# Outputs:
+# soon_to_array_tensor, now_array_tensor
+# (tensor([2, 3, 4]), array([2, 3, 4], dtype=int64))
+```
+
+## Reproducibility
+
+- Every time a random number generating method called, a pseudorandom number generator is called.
+- In order to have reproducible results across the runs a random number seed can be set.
+
+```python
+import torch
+
+rand_tensor_A = torch.rand((3,3))
+rand_tensor_B = torch.rand((3,3))
+
+print(rand_tensor_A)
+print(rand_tensor_B)
+print(rand_tensor_A == rand_tensor_B)
+
+# Outputs:
+# tensor([[0.1395, 0.6975, 0.7881],
+#         [0.9431, 0.2720, 0.2562],
+#         [0.8427, 0.3948, 0.9350]])
+# tensor([[0.8776, 0.4167, 0.2465],
+#         [0.3616, 0.5553, 0.9127],
+#         [0.0781, 0.7647, 0.0883]])
+# tensor([[False, False, False],
+#         [False, False, False],
+#         [False, False, False]])
+```
+
+Setting seed for generating same random numbers. _Yes, every time should be re-set_.
+
+```python
+torch.manual_seed(77)
+rand_tensor_C = torch.rand((3, 3))
+torch.manual_seed(77)
+rand_tensor_D = torch.rand((3, 3))
+
+print(rand_tensor_C)
+print(rand_tensor_D)
+print(rand_tensor_C == rand_tensor_D)
+
+# Outputs:
+# tensor([[0.2919, 0.2857, 0.4021],
+#         [0.4645, 0.9503, 0.2564],
+#         [0.6645, 0.8609, 0.3538]])
+# tensor([[0.2919, 0.2857, 0.4021],
+#         [0.4645, 0.9503, 0.2564],
+#         [0.6645, 0.8609, 0.3538]])
+# tensor([[True, True, True],
+#         [True, True, True],
+#         [True, True, True]])
+```
+
+## Running PyTorch on GPU
+
+- Until this part all the tensors were stored in memory.
+- This notebook written in a local machine with NVidia GPU. For using the same setup refer [here](README.md#how-did-i-installed).
+- If you'll work on a cloud environment, make sure you have access to a GPU.
+- You can check the GPU in colab with `!nvidia-smi` command.
+
+- For best practices check [here](https://pytorch.org/docs/stable/notes/cuda.html#best-practices).
+
+### Check GPU Access
+
+```python
+import torch
+torch.cuda.is_available()
+```
+
+Running PyTorch device agnostic. Use GPU if available. If not use CPU for operations.
+
+```python
+device = "cuda" if torch.cuda.is_available() else "cpu"
+```
+
+Check GPU count. Useful in multi-GPU scenarios.
+
+```python
+torch.cuda.device_count()
+```
+
+### Moving Existing Tensor to GPU
+
+Tensors are created at memory if `device` parameter is not set. Created tensor can be moved to GPU if needed. Useful for fast computing. Models and tensors (data) can be loaded to GPU.
+
+```python
+cpu_tensor = torch.tensor([1,2,3])
+
+# Outputs:
+# cpu_tensor.device
+# device(type='cpu')
+```
+
+```python
+gpu_tensor = cpu_tensor.to(device)
+# Outputs:
+# gpu_tensor
+# tensor([1, 2, 3], device='cuda:0')
+```
+
+Some libraries can not access GPU memory to perform calculations. In that case tensor to be used should moved back to memory.
+
+```python
+try:
+    gpu_tensor.numpy()
+except Exception as e:
+    print(e)
+
+# Outputs:
+# can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
+```
+
+Moving tensor back to memory with `tensor.cpu()`
+
+```python
+welcome_back_tensor = gpu_tensor.cpu().numpy()
+
+# welcome_back_tensor
+# array([1, 2, 3], dtype=int64)
 ```
