@@ -4,6 +4,8 @@
 
 **This repo is under construction**
 
+Curriculum by [Daniel Bourke](https://www.learnpytorch.io/). These are just my notes according to the author of the original content creator along with improvements and PyTorch changes as of January 2025.
+
 ## Table of Contents
 
 1. [What is PyTorch?](#what-is-pytorch)
@@ -77,3 +79,5 @@ And done.
 ## Representing the Data: [Tensors](TENSORS.md)
 
 Computers can only understand numbers. Numbers Mason, what do they mean?
+
+## Approximation to a Solution: [Models](MODELS.md)

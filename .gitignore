@@ -1,0 +1,6 @@
+# PyTorch model files
+*.pt
+*.pth
+
+# resource files
+*.pdn
