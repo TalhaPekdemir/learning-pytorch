@@ -13,6 +13,7 @@ Curriculum by [Daniel Bourke](https://www.learnpytorch.io/). These are just my n
    1. [How Did I Installed?](#how-did-i-installed)
 3. [When in Doubt](#when-in-doubt)
 4. [Representing the Data: Tensors](#representing-the-data-tensors)
+5. [Approximation to a Solution: Models](#approximation-to-a-solution-models)
 
 ## What is PyTorch?
 
