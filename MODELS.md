@@ -10,7 +10,7 @@ In real world, _generally_ if there is a problem, there is also a solution exist
 
 **Problem:** What is the slope of the line inside a cartesian coordinate system and how to represent the line formulaically?
 
-**Solution:** Difference in y coordinates divided by difference in x coordinates gives the slope of a line. The line can have a slope that can be represented as `tanθ`. Theta (θ) is the angle between the x axis and the line. A line can also be dislaced for an amount, enabling it to move inside coordinate system.
+**Solution:** Difference in y coordinates divided by difference in x coordinates gives the slope of a line. The line can have a slope that can be represented as `tanθ`. Theta (θ) is the angle between the x axis and the line. A line can also be displaced for an amount, enabling it to move inside coordinate system.
 
 - This line fitting problem is also called **Linear Regression**
 
@@ -129,7 +129,7 @@ There are 3 main steps to create a model in PyTorch:
 
 For the feedforward neural networks, data flows from input to output. In this process, data is transformed and an output is generated with the help of weights and biasses. Also known as forward propagation.
 
-All `torch.nn.Module` sublasses have to implement the `forward()` function in order to apply transformations to input data.
+All `torch.nn.Module` subclasses have to implement the `forward()` function in order to apply transformations to input data.
 
 ### Model Structure of Proposed Solution
 
@@ -195,7 +195,7 @@ The proposed model currently has only 2 parameters namely weight and bias. There
 ## How to Use the Created Model?
 
 - Inputting data to model and getting an output from a model means making a prediction.
-- A model can make predictions without being trained. Because there are aleady parameters initialized when model itself is initialized.
+- A model can make predictions without being trained. Because there are parameters initialized already when model itself is initialized.
 - Training only makes model more accurate of generating the correct or expected output.
 - Simply use the model instance like a method.
 - `forward()` method that we implemented will be called when a model generating output in PyTorch.
