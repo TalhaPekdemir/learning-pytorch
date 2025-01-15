@@ -1,5 +1,7 @@
 # Tensors on PyTorch
 
+**Check out [Notebook](tensors.ipynb)**.
+
 # Table of Contents
 
 1.  [Creation of Tensor](#creation-of-tensor)
@@ -114,7 +116,7 @@ random_tensor = torch.rand(2)
 ```
 
 ```python
-# with dimesional size parameter
+# with dimensional size parameter
 random_tensor = torch.rand(size=(3, 2))
 
 # tensor([[0.2733, 0.3337],
@@ -143,7 +145,7 @@ ones_tensor = torch.ones(size=(2, 2))
 #         [1., 1.]])
 ```
 
-- **Why ones and zeros?**: Useful for masking opearations.
+- **Why ones and zeros?**: Useful for masking operations.
 
 #### Tensor in Range
 
@@ -219,15 +221,15 @@ params_tensor = torch.tensor(data=[1, 9, 0, 3],
 
 ## Tensor Properties
 
-| Property      | Description                                                  |
-| ------------- | ------------------------------------------------------------ |
-| tensor.item() | Get the data inside tensor as Python types.                  |
-| tensor.data   | Returns tensor data as tensor type                           |
-| tensor.device | Returns the device tensor is living. (eg. cpu or cuda)       |
-| tensor.dtype  | Returns tensor data type (eg. torch.float32)                 |
-| tensor.ndim   | Get the dimension info of tensor.                            |
-| tensor.shape  | Get the shape of tensor. Returns an array of dimesion sizes. |
-| tensor.size() | Returns tensor shape. Similar to `tensor.shape`              |
+| Property      | Description                                                   |
+| ------------- | ------------------------------------------------------------- |
+| tensor.item() | Get the data inside tensor as Python types.                   |
+| tensor.data   | Returns tensor data as tensor type                            |
+| tensor.device | Returns the device tensor is living. (eg. cpu or cuda)        |
+| tensor.dtype  | Returns tensor data type (eg. torch.float32)                  |
+| tensor.ndim   | Get the dimension info of tensor.                             |
+| tensor.shape  | Get the shape of tensor. Returns an array of dimension sizes. |
+| tensor.size() | Returns tensor shape. Similar to `tensor.shape`               |
 
 - An easy way of telling the exact dimension of a tensor by looking, simply count square brackets at the beginning.
 
@@ -352,7 +354,7 @@ tensor_B = torch.tensor([[7, 10],
                          [8, 11],
                          [9, 12]])
 
-# Would give an error: mat1 and mat2 shapes cannot be multiplied (3x2 and 3x2) because iner dimension for tensor_A is 2 but inner shape for tensor_B is 3.
+# Would give an error: mat1 and mat2 shapes cannot be multiplied (3x2 and 3x2) because inner dimension for tensor_A is 2 but inner shape for tensor_B is 3.
 torch.matmul(tensor_A, tensor_B)
 ```
 
@@ -448,7 +450,7 @@ print("With tensor method but input casted before:",
       agg_tensor.type(torch.float32).mean())
 
 # Similar to min and max, mean can be calculated with torch methods.
-# Beware that input tensor still needed to be casted to suppoted dtype.
+# Beware that input tensor still needed to be casted to supported dtype.
 print("With torch methods: ", torch.mean(agg_tensor.type(torch.float32)))
 
 # Output:
@@ -470,7 +472,7 @@ agg_tensor.sum(), torch.sum(agg_tensor)
 
 ### Arg Min
 
-Returns the index o miniumum value in tensor.
+Returns the index o minimum value in tensor.
 
 ```python
 agg_tensor.argmin(), torch.argmin(agg_tensor)
@@ -494,7 +496,7 @@ agg_tensor.argmax(), torch.argmax(agg_tensor)
 
 - Reshape: Reshape tensor to specified shape.
 - View: Using the same memory return a view of the tensor.
-- Stack: Stack tensor on top of each other (vertical stack) or side by side (horizonal stack). vstack and hstack also exists as seperate methods.
+- Stack: Stack tensor on top of each other (vertical stack) or side by side (horizontal stack). vstack and hstack also exists as separate methods.
 - Squeeze: Removes the shape of `1` dimensions from tensor.
 - Unsqueeze: Adds a new dimension of `1` to specified tensor index.
 - Permute: Rearrange dimension order.
@@ -526,7 +528,7 @@ reshaped_tensor, reshaped_tensor.shape
 # (tensor([[ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12]]), torch.Size([1, 12]))
 ```
 
-- A row vector can be turned into a column vecotor with reshaping.
+- A row vector can be turned into a column vector with reshaping.
 
 ```python
 reshaped_tensor = dummy_tensor.reshape(12, 1)
@@ -776,11 +778,11 @@ image_tensor = torch.rand((128, 128, 3))
 print("Image is currently in order of width, height, color channels with the size of", image_tensor.shape)
 
 rearranged_tensor = torch.permute(image_tensor, dims=(2, 1, 0)) # 2->0, 1->1, 0->2
-print("Image rearranged as color chanels, width, height. New shape is ", rearranged_tensor.shape)
+print("Image rearranged as color channels, width, height. New shape is ", rearranged_tensor.shape)
 
 # Outputs:
 # Image is currently in order of width, height, color channels with the size of torch.Size([128, 128, 3])
-# Image rearranged as color chanels, width, height. New shape is torch.Size([3, 128, 128])
+# Image rearranged as color channels, width, height. New shape is torch.Size([3, 128, 128])
 ```
 
 - Changes on assigned variable will effect original tensor since permute works as view.
