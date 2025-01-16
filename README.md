@@ -81,4 +81,38 @@ And done.
 
 Computers can only understand numbers. Numbers Mason, what do they mean?
 
+**Topics covered:**
+
+1. What is a Tensor?
+2. Creating Tensors
+3. Tensor Properties
+4. Tensor Operations
+   - Basic Mathematical Operations
+   - Matrix Multiplication
+   - Aggregation
+   - Shape Manipulation
+5. Indexing
+6. Tensors and Numpy
+7. Reproducibility
+8. Tensors on GPU
+
 ## Approximation to a Solution: [Models](MODELS.md)
+
+In this chapter, introduction to model operations utilized for training a regression model.
+
+**Topics Covered:**
+
+1. Model Description
+2. Mathematical Model and Model in Machine Learning
+3. Creating a Regression Model in PyTorch
+4. Inference with Model
+5. Inside a Model
+6. Model Training
+   1. Forward pass
+   2. Gradient Descent
+   3. Loss Function
+   4. Optimizer
+   5. Backpropagation
+   6. Train Loop and Test Loop
+
+## Predicting Discrete Values: [Classification](CLASSIFICATION.md)
