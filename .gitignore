@@ -5,3 +5,9 @@
 # resource files
 *.pdn
 *.psd
+
+# https://github.com/github/gitignore/blob/main/Python.gitignore
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
