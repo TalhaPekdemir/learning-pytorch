@@ -1,8 +1,38 @@
 # Basic Model Operations on PyTorch
 
+**Check out [Notebook](models.ipynb)**.
+
 # Table of Contents
 
-[TODO]
+- [What is a model?](#what-is-a-model)
+- [How to Create a Model?](#how-to-create-a-model)
+  - [Model Creation Preparation 1: Acquire Data](#model-creation-preparation-1-acquire-data)
+  - [Model Creation Preparation 2: Train Test Split](#model-creation-preparation-2-train-test-split)
+- [How to Create a Model, in PyTorch?](#how-to-create-a-model-in-pytorch)
+  - [What is Forward Pass?](#what-is-forward-pass)
+  - [Model Structure of Proposed Solution](#model-structure-of-proposed-solution)
+  - [Creating a New Instance of a Model](#creating-a-new-instance-of-a-model)
+  - [Checking Out Model Parameters](#checking-out-model-parameters)
+- [How to Use the Created Model?](#how-to-use-the-created-model)
+- [How to Train Your Model?](#how-to-train-your-model)
+  - [What is Model Training?](#what-is-model-training)
+  - [What is Gradient (Descent)?](#what-is-gradient-descent)
+  - [What is Loss Function?](#what-is-loss-function)
+  - [What is an Optimizer?](#what-is-an-optimizer)
+  - [What is Backpropagation?](#what-is-backpropagation)
+  - [Train Loop](#train-loop)
+  - [Enhancing Train Loop](#enhancing-train-loop)
+  - [Observing Training Results](#observing-training-results)
+- [Saving and Loading Models](#saving-and-loading-models)
+  - [Save Model](#save-model)
+  - [Load Model](#load-model)
+- [Combining What We Have Learned](#combining-what-we-have-learned)
+  - [Device Independent Processing](#device-independent-processing)
+  - [Re-writing Linear Regression Model PyTorch Way](#re-writing-linear-regression-model-pytorch-way)
+  - [Create New Instance of the Model](#create-new-instance-of-the-model)
+  - [Move Model to GPU](#move-model-to-gpu)
+  - [Train with GPU](#train-with-gpu)
+  - [Results](#results)
 
 ## What is a model?
 
@@ -10,7 +40,7 @@ In real world, _generally_ if there is a problem, there is also a solution exist
 
 **Problem:** What is the slope of the line inside a cartesian coordinate system and how to represent the line formulaically?
 
-**Solution:** Difference in y coordinates divided by difference in x coordinates gives the slope of a line. The line can have a slope that can be represented as `tanθ`. Theta (θ) is the angle between the x axis and the line. A line can also be dislaced for an amount, enabling it to move inside coordinate system.
+**Solution:** Difference in y coordinates divided by difference in x coordinates gives the slope of a line. The line can have a slope that can be represented as `tanθ`. Theta (θ) is the angle between the x axis and the line. A line can also be displaced for an amount, enabling it to move inside coordinate system.
 
 - This line fitting problem is also called **Linear Regression**
 
@@ -129,7 +159,7 @@ There are 3 main steps to create a model in PyTorch:
 
 For the feedforward neural networks, data flows from input to output. In this process, data is transformed and an output is generated with the help of weights and biasses. Also known as forward propagation.
 
-All `torch.nn.Module` sublasses have to implement the `forward()` function in order to apply transformations to input data.
+All `torch.nn.Module` subclasses have to implement the `forward()` function in order to apply transformations to input data.
 
 ### Model Structure of Proposed Solution
 
@@ -195,7 +225,7 @@ The proposed model currently has only 2 parameters namely weight and bias. There
 ## How to Use the Created Model?
 
 - Inputting data to model and getting an output from a model means making a prediction.
-- A model can make predictions without being trained. Because there are aleady parameters initialized when model itself is initialized.
+- A model can make predictions without being trained. Because there are parameters initialized already when model itself is initialized.
 - Training only makes model more accurate of generating the correct or expected output.
 - Simply use the model instance like a method.
 - `forward()` method that we implemented will be called when a model generating output in PyTorch.
@@ -216,7 +246,7 @@ y_preds = linear_model(X_test)
 #         [0.6423]], grad_fn=<AddBackward0>)
 ```
 
-- Making predictions is also called "inferencing".
+- Making predictions is also called "running inference".
 - Using `with torch.inference_mode()` then getting the output is the recommended way of running inferences in PyTorch due to layers working differently in train and test times. [Docs](https://pytorch.org/docs/stable/generated/torch.autograd.grad_mode.inference_mode.html).
 - Inference mode stops PyTorch from tracking gradients. While tracking gradients, all movements and changes of tensors will be watched by PyTorch hence much more system resources will be used.
 - Gradient tracking is useful in train time because of another part in machine learning called **backpropagation** that will be discussed later.
@@ -249,7 +279,7 @@ with torch.inference_mode():
 
 ## How to Train Your Model?
 
-[TODO: Add banner]
+![how-to-train-your-model](resources/htym.png)
 
 ### What is Model Training?
 
@@ -337,7 +367,7 @@ Setting an optimizer in PyTorch:
 optimizer = torch.optim.SGD(params=linear_model.parameters(),
                             lr=0.01)
 
-# optimizer: 
+# optimizer:
 # SGD (
 # Parameter Group 0
 #     dampening: 0
@@ -363,3 +393,326 @@ optimizer = torch.optim.SGD(params=linear_model.parameters(),
 - This calculation is done with gradients.
 - That is why every tensor is tracked by PyTorch. To see all the calculations and ease the backward pass.
 - Every parameter has effect on the next calculation to be done. To propagate all of them chain rule is used. This way, major or minor, error on all parameters can be addressed.
+
+### Train Loop
+
+Let's see how all these steps are applied with code.
+
+**Most basic version of a training loop:**
+
+1. Loop for a given number of times, namely epoch.
+2. Set model to train mode.
+   - [Train and Eval Mode Differences](https://www.geeksforgeeks.org/what-does-model-train-do-in-pytorch/)
+3. Clear the gradient buffer.
+   - [It is beneficial to zero out gradients when building a neural network. This is because by default, gradients are accumulated in buffers (i.e, not overwritten) whenever `.backward()` is called.](https://pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html)
+4. Make predictions with current weights of model.
+5. Calculate loss with predictions against ground truth.
+6. Backward pass the error.
+7. Adjust model parameters using optimizer.
+
+```python
+torch.manual_seed(7)
+EPOCHS = 200
+
+# 1) Loop for a specified amount
+for epoch in range(EPOCHS):
+    # 2) Set model to train mode
+    linear_model.train()
+
+    # 3) Clear the gradients
+    optimizer.zero_grad()
+
+    # 4) Make predictions
+    y_pred = linear_model(X_train)
+
+    # 5) Calculate the loss
+    loss = loss_fn(y_pred, y_train)
+
+    # 6) Backpropagation
+    loss.backward()
+
+    # 7) Adjust model parameters
+    optimizer.step()
+```
+
+### Enhancing Train Loop
+
+- We can do much more than just using predefined functions of PyTorch.
+- Since entirety of PyTorch is fully compatible with python itself, we can customize the train loop for our needs.
+
+- Like adding validation or collecting data about epochs.
+
+```python
+torch.manual_seed(7)
+EPOCHS = 250
+PAD = len(str(EPOCHS))
+
+# Keep epochs for binning
+epoch_history = []
+# Keep track of losses
+loss_history = []
+test_loss_history = []
+
+# 1) Loop for a specified amount
+for epoch in range(1, EPOCHS+1):
+    # 2) Set model to train mode
+    linear_model.train()
+
+    # 3) Clear the gradients
+    optimizer.zero_grad()
+
+    # 4) Make predictions
+    y_pred = linear_model(X_train)
+
+    # 5) Calculate the loss
+    loss = loss_fn(y_pred, y_train)
+
+    # 6) Backpropagation
+    loss.backward()
+
+    # 7) Adjust model parameters
+    optimizer.step()
+
+    # Set model to evaluation mode
+    linear_model.eval()
+
+    # Use inference mode for testing.
+    with torch.inference_mode():
+        test_pred = linear_model(X_test)
+        test_loss = loss_fn(test_pred, y_test)
+
+    # Can be customized. For now just print losses every epoch.
+    if epoch % 25 == 0:
+        epoch_history.append(epoch)
+        loss_history.append(loss)
+        test_loss_history.append(test_loss)
+
+        print(f"Epoch: {epoch:>{PAD}} | Loss: {loss:.4f} | Test Loss: {test_loss:.4f}")
+```
+
+```
+Outputs:
+Epoch:  25 | Loss: 0.0786 | Test Loss: 0.1829
+Epoch:  50 | Loss: 0.0700 | Test Loss: 0.1629
+Epoch:  75 | Loss: 0.0615 | Test Loss: 0.1429
+Epoch: 100 | Loss: 0.0529 | Test Loss: 0.1229
+Epoch: 125 | Loss: 0.0443 | Test Loss: 0.1029
+Epoch: 150 | Loss: 0.0357 | Test Loss: 0.0829
+Epoch: 175 | Loss: 0.0271 | Test Loss: 0.0629
+Epoch: 200 | Loss: 0.0185 | Test Loss: 0.0423
+Epoch: 225 | Loss: 0.0099 | Test Loss: 0.0223
+Epoch: 250 | Loss: 0.0014 | Test Loss: 0.0016
+```
+
+### Observing Training Results
+
+We can see that model's weight and bias is really close to what we set at the beginning.
+
+```python
+linear_model.state_dict()
+
+# Outputs:
+# OrderedDict([('weight', tensor([0.5952])), ('bias', tensor([0.4026]))])
+```
+
+If you look closely ground truth and test values almost on top of each other.
+
+This gives us the result of how a model can learn starting from total randomness and slowly but surely approaching to solution.
+
+![training result](resources/training-result.png)
+
+## Saving and Loading Models
+
+- We have completed model training but the model still lives in computer memory.
+- Upon closing the computer all our hard work will vanish.
+- How to persist our model for later use? Of course saving it to the disk.
+- With `torch.save()` method we can save the model and if needed can be loaded in environment with `torch.load()` method.
+- Also PyTorch uses pickle library to serialize every serializable object. Saving the complete model is discouraged. Instead, save the weights of a model.
+- For more info check out [Saving and Loading Models in PyTorch](https://pytorch.org/tutorials/beginner/saving_loading_models.html)
+- Saving weights only is by default. But specifying loading weights requires `torch.nn.Module.load_state_dict()` to be called in `.load()` method.
+
+- For save path, a string or a path-like object can be used or for more control over path strings `os` package can be used too.
+
+- I have been using `os` for my path processes but for a difference (and learning purposes) `pathlib` is used in the following examples.
+
+### Save Model
+
+```python
+from pathlib import Path
+
+MODEL_PATH = Path("models")
+# https://docs.python.org/3/library/pathlib.html#pathlib.Path.mkdir
+# .mkdir(): make directory
+# -parents=True: create parent files if needed.
+# -exist_ok=True: Do not raise error if file exists already.
+MODEL_PATH.mkdir(parents=True, exist_ok=True)
+
+MODEL_NAME = "linear_model.pth"
+
+# A syntax usable in pathlib denotes a path structure.
+MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
+
+print(f"Model is saving to {MODEL_SAVE_PATH}")
+
+# Saving the state dictionary is recommended since only parameters are saved
+# and can be loaded directly to the model later.
+# Saving the entire model can break the code in various ways due to
+# pickle's inner working.
+torch.save(obj=linear_model.state_dict(), f=MODEL_SAVE_PATH)
+```
+
+### Load Model
+
+```python
+# Load the saved weights on a new instance.
+loaded_model = LinearRegressionModel()
+print("Weights before loading weights: ", loaded_model.state_dict())
+
+loaded_model.load_state_dict(torch.load(f=MODEL_SAVE_PATH, weights_only=True))
+print("Weights after loading weights: ", loaded_model.state_dict())
+
+# Outputs:
+# Weights before loading weights:  OrderedDict([('weight', tensor([0.9468])), ('bias', tensor([-1.1143]))])
+# Weights after loading weights:  OrderedDict([('weight', tensor([0.5952])), ('bias', tensor([0.4026]))])
+```
+
+## Combining What We Have Learned
+
+**Note:** Check out [tensor operations](TENSORS.md) if you have not already. Be sure to check out [Tensors Notebook](tensors.ipynb) too.
+
+### Device Independent Processing
+
+**Note:** If you do not have a GPU or have not installed PyTorch for GPU use you can only use CPU. Check out [installing PyTorch](README.md#installing-pytorch).
+
+```python
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# device:
+# 'cuda'
+```
+
+### Re-writing Linear Regression Model PyTorch Way
+
+```python
+class LinearRegressionModelV2(nn.Module):
+    def __init__(self,):
+        super().__init__()
+
+        # https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
+        # Input value: X, output value: y
+        self.linear_layer = nn.Linear(in_features=1,
+                                      out_features=1,
+                                      bias=True) # Dense layer if you are coming from TensorFlow.
+
+    def forward(self, x:torch.Tensor) -> torch.tensor:
+        return self.linear_layer(x)
+```
+
+### Create New Instance of the Model
+
+```python
+# Seed for reproducibility
+torch.manual_seed(77)
+linear_model_v2 = LinearRegressionModelV2()
+```
+
+### Move Model to GPU
+
+```python
+linear_model_v2.to(device)
+
+# Verify
+next(linear_model_v2.parameters()).device
+
+# Outputs:
+# device(type='cuda', index=0)
+```
+
+### Train with GPU
+
+```python
+# Choose loss function
+loss_fn = nn.L1Loss()
+
+# Choose optimizer
+optimizer = torch.optim.Adam(params=linear_model_v2.parameters(),
+                             lr=0.01)
+
+# Model is in GPU but train and test data is not will throw an error.
+X_train = X_train.to(device)
+y_train = y_train.to(device)
+X_test = X_test.to(device)
+y_test = y_test.to(device)
+
+# Collecting data
+EPOCHS = 200
+# A bit controversial but more than enough here
+PAD = len(str(EPOCHS))
+
+epoch_history = []
+train_loss_history = []
+test_loss_history = []
+
+# train loop
+torch.manual_seed(7)
+for epoch in range(1, EPOCHS + 1):
+    # set model to train mode
+    linear_model_v2.train()
+
+    optimizer.zero_grad()
+
+    y_preds = linear_model_v2(X_train)
+
+    loss = loss_fn(y_preds, y_train)
+    loss.backward()
+
+    optimizer.step()
+
+    # Test/Validation Loop
+    if epoch % 25 == 0:
+        # Set model to eval mode
+        linear_model_v2.eval()
+
+        with torch.inference_mode():
+            test_preds = linear_model_v2(X_test)
+            test_loss = loss_fn(test_preds, y_test)
+
+        # Collect data
+        epoch_history.append(epoch)
+        train_loss_history.append(loss)
+        test_loss_history.append(test_loss)
+
+        print(f"Epoch: {epoch:>{PAD}} | Train Loss: {loss:.5f} | Test Loss: {test_loss:.5f}")
+```
+
+### Results
+
+```
+Epoch:  25 | Train Loss: 0.89135 | Test Loss: 1.26053
+Epoch:  50 | Train Loss: 0.54385 | Test Loss: 0.78803
+Epoch:  75 | Train Loss: 0.19635 | Test Loss: 0.31553
+Epoch: 100 | Train Loss: 0.03741 | Test Loss: 0.01455
+Epoch: 125 | Train Loss: 0.01231 | Test Loss: 0.01302
+Epoch: 150 | Train Loss: 0.00228 | Test Loss: 0.00299
+Epoch: 175 | Train Loss: 0.00015 | Test Loss: 0.00090
+Epoch: 200 | Train Loss: 0.00179 | Test Loss: 0.00369
+```
+
+```python
+# Test
+linear_model_v2.eval()
+
+with torch.inference_mode():
+    y_hat = linear_model_v2(X_test)
+
+# Take prediction result tensor to CPU
+# Matplotlib uses Numpy.
+# Numpy works on CPU.
+# If device not changed, an error will thrown.
+# Try for yourself and see one of the most common errors you'll encounter.
+# Tensors on different devices can not interact with each other.
+# You must carry them to necessary device.
+plot_predictions(predictions=y_hat.cpu())
+```
+
+![linear layer train plot](resources/linear-layer-train-plot.png)
