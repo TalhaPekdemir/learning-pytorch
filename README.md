@@ -14,6 +14,7 @@ Curriculum by [Daniel Bourke](https://www.learnpytorch.io/). These are just my n
 3. [When in Doubt](#when-in-doubt)
 4. [Representing the Data: Tensors](#representing-the-data-tensors)
 5. [Approximation to a Solution: Models](#approximation-to-a-solution-models)
+6. [Predicting Discrete Values: Classification](#predicting-discrete-values-classification)
 
 ## What is PyTorch?
 
@@ -116,3 +117,8 @@ In this chapter, introduction to model operations utilized for training a regres
    6. Train Loop and Test Loop
 
 ## Predicting Discrete Values: [Classification](CLASSIFICATION.md)
+
+**Topics Covered:**
+
+1. [Binary Classification](CLASSIFICATION.BINARY.md)
+2. [Multiclass Classification](CLASSIFICATION.MULTICLASS.md)
