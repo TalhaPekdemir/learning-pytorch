@@ -2,6 +2,8 @@
 
 Binary classification is the type of classification problem having 2 possible categories to predict. In order to make an example of this problem a toy dataset is used from Scikit Learn.
 
+**Check out [Notebook](classification.binary.ipynb)**.
+
 # Table of Contents
 
 - [Binary Classification with PyTorch](#binary-classification-with-pytorch)
@@ -53,9 +55,9 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=7)
 
 # X_train.shape -> (800, 2)
-# X_test.shape -> (200, 2)
+# X_test.shape  -> (200, 2)
 # y_train.shape -> (800, )
-# y_test.shape -> (200, )
+# y_test.shape  -> (200, )
 ```
 
 ### From Numpy Array to Tensors
