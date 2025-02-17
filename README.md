@@ -15,6 +15,7 @@ Curriculum by [Daniel Bourke](https://www.learnpytorch.io/). These are just my n
 4. [Representing the Data: Tensors](#representing-the-data-tensors)
 5. [Approximation to a Solution: Models](#approximation-to-a-solution-models)
 6. [Predicting Discrete Values: Classification](#predicting-discrete-values-classification)
+7. [Computer Vision with torchvision](#computer-vision-with-torchvision)
 
 ## What is PyTorch?
 
@@ -122,3 +123,18 @@ In this chapter, introduction to model operations utilized for training a regres
 
 1. [Binary Classification](CLASSIFICATION.BINARY.md)
 2. [Multiclass Classification](CLASSIFICATION.MULTICLASS.md)
+
+## [Computer Vision](computer-vision.ipynb) with torchvision
+
+**Topics Covered:**
+
+1.  `torchvision` package for computer vision applications
+2.  Built-in datasets
+3.  Transforming data to tensor with Transforms API v2
+4.  Custom data loading pipeline - DataLoader
+5.  Dataset batching
+6.  Reusable training loop
+7.  Convolutional Neural Network based on TinyVGG
+8.  Confusion Matrix
+    1. Calculating with `torchmetrcis`
+    2. Visualizing with `mlxtend`
