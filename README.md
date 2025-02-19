@@ -16,6 +16,7 @@ Curriculum by [Daniel Bourke](https://www.learnpytorch.io/). These are just my n
 5. [Approximation to a Solution: Models](#approximation-to-a-solution-models)
 6. [Predicting Discrete Values: Classification](#predicting-discrete-values-classification)
 7. [Computer Vision with torchvision](#computer-vision-with-torchvision)
+8. [Training with Custom Datasets](#training-with-custom-datasets)
 
 ## What is PyTorch?
 
@@ -138,3 +139,17 @@ In this chapter, introduction to model operations utilized for training a regres
 8.  Confusion Matrix
     1. Calculating with `torchmetrcis`
     2. Visualizing with `mlxtend`
+
+## Training with [Custom Datasets](custom-datasets.ipynb)
+
+In previous examples, data was simple enough to fit in memory and working specifically for PyTorch. In this chapter, shown how to import an external structured dataset for performing multiclass image classification.
+
+**Topics Covered:**
+
+1. Dataset import with `torchvision.datasets.ImageFolder`
+2. Converting PIL images to tensors with Transforms API v2
+3. Creating a batched dataset with `torch.data.DataLoader`
+4. Convolutional Neural Network based on TinyVGG
+5. Reusable training loop
+6. Plotting results
+7. Data augmentation with `TrivialAugmentWide`
